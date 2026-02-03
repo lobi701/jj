@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>情笺</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+    
+    :root {
+      --bg-paper: #f8f5f2;
+      --ink-primary: #1a1a1a;
+      --ink-secondary: #4d4d4d;
+      --seal-red: #c82f3c;
+    }
+
+    .font-serif-sc { font-family: 'Noto Serif SC', serif; }
+
+    /* Paper Background & Base Styles */
+    body {
+      background-color: var(--bg-paper);
+      color: var(--ink-primary);
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="n" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="6" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.03"/></svg>');
+      overflow-x: hidden;
+    }
+
+    /* Plum Blossom Animation */
+    .petals-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+    .petal { position: absolute; background-color: #fce4ec; border-radius: 50% 0; opacity: 0; animation: fall linear infinite; }
+    @keyframes fall {
+      0% { transform: translate(var(--x-start), -10vh) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--x-end), 110vh) rotate(360deg); opacity: 0; }
+    }
+    .petal:nth-child(1) { --x-start: 10vw; --x-end: 5vw; animation-duration: 15s; animation-delay: 0s; width: 15px; height: 10px; }
+    .petal:nth-child(2) { --x-start: 25vw; --x-end: 20vw; animation-duration: 12s; animation-delay: 3s; width: 10px; height: 7px; }
+    .petal:nth-child(3) { --x-start: 40vw; --x-end: 45vw; animation-duration: 18s; animation-delay: 1s; width: 18px; height: 12px; }
+    .petal:nth-child(4) { --x-start: 60vw; --x-end: 55vw; animation-duration: 10s; animation-delay: 5s; width: 12px; height: 8px; }
+    .petal:nth-child(5) { --x-start: 75vw; --x-end: 80vw; animation-duration: 20s; animation-delay: 2s; width: 16px; height: 11px; }
+    .petal:nth-child(6) { --x-start: 90vw; --x-end: 85vw; animation-duration: 14s; animation-delay: 6s; width: 14px; height: 9px; }
+
+    /* Custom Animations */
+    @keyframes fadeInInk {
+      from { opacity: 0; filter: blur(5px); transform: translateY(20px); }
+      to { opacity: 1; filter: blur(0); transform: translateY(0); }
+    }
+    .animate-fadeInInk { animation: fadeInInk 1s ease-out forwards; }
+    
+    @keyframes sealStamp {
+      0% { transform: scale(1.5); opacity: 0; }
+      50% { transform: scale(0.9); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-sealStamp { animation: sealStamp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+    /* Ink Wash Card Style */
+    .card-ink {
+      position: relative;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .card-ink::after {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border-radius: 1rem;
+      background: radial-gradient(circle, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 70%);
+      transform: scale(0.95);
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: -1;
+    }
+    .card-ink:hover::after {
+      transform: scale(1.02);
+      opacity: 1;
+    }
+
+    /* Seal Button */
+    .seal-button {
+      font-family: 'Noto Serif SC', serif;
+      width: 120px;
+      height: 50px;
+      border: 2px solid var(--seal-red);
+      background-color: transparent;
+      color: var(--seal-red);
+      font-weight: 700;
+      font-size: 1.25rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .seal-button:hover {
+      color: white;
+    }
+    .seal-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--seal-red);
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: -1;
+    }
+    .seal-button:hover::before {
+      transform: translateY(0);
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "rxjs": "https://esm.sh/rxjs@^7.8.2?conditions=es2015",
+    "rxjs/operators": "https://esm.sh/rxjs@^7.8.2/operators?conditions=es2015",
+    "rxjs/ajax": "https://esm.sh/rxjs@^7.8.2/ajax?conditions=es2015",
+    "rxjs/webSocket": "https://esm.sh/rxjs@^7.8.2/webSocket?conditions=es2015",
+    "rxjs/testing": "https://esm.sh/rxjs@^7.8.2/testing?conditions=es2015",
+    "rxjs/fetch": "https://esm.sh/rxjs@^7.8.2/fetch?conditions=es2015",
+    "@angular/core": "https://esm.sh/@angular/core@^21.1.2?external=rxjs",
+    "@angular/common": "https://esm.sh/@angular/common@^21.1.2?external=rxjs",
+    "@angular/platform-browser": "https://esm.sh/@angular/platform-browser@^21.1.2?external=rxjs",
+    "@angular/compiler": "https://esm.sh/@angular/compiler@^21.1.2?external=rxjs",
+    "@angular/forms": "https://esm.sh/@angular/forms@^21.1.2?external=rxjs",
+    "@google/genai": "https://esm.sh/@google/genai?conditions=es2015"
+  }
+}
+</script>
+</head>
+<body class="font-serif-sc">
+  <div class="petals-container">
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+  </div>
+  <app-root></app-root>
+</body>
+</html>

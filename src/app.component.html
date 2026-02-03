@@ -1,0 +1,105 @@
+<div class="relative min-h-screen p-4 sm:p-8">
+  <main class="max-w-2xl mx-auto space-y-16 relative z-0">
+    
+    <!-- Header -->
+    <header class="text-center pt-12 animate-fadeInInk">
+      <h1 class="font-serif-sc text-6xl sm:text-7xl font-bold text-[var(--ink-primary)] tracking-[0.3em]">
+        {{ title() }}
+      </h1>
+      <p class="mt-4 text-lg text-[var(--ink-secondary)]">
+        见字如晤，展信舒颜
+      </p>
+    </header>
+
+    <!-- Counter & AI Poet Section -->
+    <section class="grid md:grid-cols-2 gap-8 items-start">
+      <!-- Counter -->
+      <div class="bg-white/50 border-t border-gray-200 p-6 text-center animate-fadeInInk card-ink rounded-lg" style="animation-delay: 150ms;">
+        <h2 class="text-xl font-bold text-[var(--ink-secondary)] mb-4 tracking-widest">岁时记</h2>
+        <div class="flex items-center justify-center gap-4">
+          <span class="text-6xl font-serif font-bold text-[var(--ink-primary)] tabular-nums">{{ counter() }}</span>
+        </div>
+        <p class="text-gray-500 mt-3 text-sm">...朝朝暮暮，岁岁年年</p>
+      </div>
+
+      <!-- AI Poet -->
+      <div class="bg-white/50 border-t border-gray-200 p-6 text-center animate-fadeInInk card-ink rounded-lg" style="animation-delay: 250ms;">
+        <h2 class="text-xl font-bold text-[var(--ink-secondary)] mb-4 tracking-widest">灵感之泉</h2>
+        <button (click)="generateQuote()" [disabled]="isGenerating()" class="w-full px-4 py-2 text-md font-bold text-[var(--ink-secondary)] border border-[var(--ink-secondary)]/50 rounded-md hover:bg-gray-100 transition-colors duration-300 disabled:opacity-50">
+          @if (isGenerating()) {
+            <span>寻句中...</span>
+          } @else {
+            <span>借一句诗</span>
+          }
+        </button>
+        @if (loveQuote()) {
+          <blockquote class="mt-4 p-3 text-left">
+            <p class="text-base italic text-[var(--ink-primary)]">“{{ loveQuote() }}”</p>
+          </blockquote>
+        }
+      </div>
+    </section>
+
+    <!-- Chapters -->
+    <section class="space-y-10 animate-fadeInInk" style="animation-delay: 350ms;">
+      @for (chapter of loveChapters(); track chapter.title) {
+        <div class="bg-white/50 border-t border-gray-200 p-6 card-ink rounded-lg">
+          <h3 class="text-2xl font-bold text-[var(--ink-primary)] flex items-center">
+            <span class="text-sm font-normal border border-current rounded-full w-8 h-8 flex items-center justify-center mr-4">{{ chapter.icon }}</span>
+            {{ chapter.title }}
+          </h3>
+          <p class="text-[var(--ink-secondary)] mt-3 pl-12 border-l-2 border-gray-200/70 ml-4">{{ chapter.description }}</p>
+        </div>
+      }
+    </section>
+
+    <!-- Form -->
+    <section class="bg-white/50 border-t border-gray-200 p-8 rounded-lg animate-fadeInInk card-ink" style="animation-delay: 450ms;">
+      <div class="transition-all duration-500">
+        @if (!isSent()) {
+          <form [formGroup]="confessionForm" (ngSubmit)="onSubmit()">
+            <h2 class="text-3xl font-bold text-[var(--ink-primary)] mb-6 text-center tracking-widest">落笔处</h2>
+            <div class="flex flex-col gap-6">
+              <textarea formControlName="message" placeholder="纸短情长，言尽于此..." rows="6" class="w-full px-4 py-3 bg-transparent border-b-2 border-[var(--ink-secondary)]/30 text-lg placeholder:text-gray-400 focus:outline-none focus:border-[var(--ink-primary)] transition-colors duration-300"></textarea>
+              <input formControlName="name" type="text" placeholder="你的署名" class="w-1/2 self-end text-right px-4 py-2 bg-transparent border-b-2 border-[var(--ink-secondary)]/30 text-lg placeholder:text-gray-400 focus:outline-none focus:border-[var(--ink-primary)] transition-colors duration-300">
+              <div class="text-center pt-4">
+                <button type="submit" [disabled]="!confessionForm.valid" class="seal-button disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-[var(--seal-red)] disabled:hover:before:transform-none">
+                  封缄
+                </button>
+              </div>
+            </div>
+          </form>
+        }
+      </div>
+    </section>
+    
+    <footer class="text-center pt-8 pb-4 animate-fadeInInk" style="animation-delay: 550ms;">
+      <p class="text-gray-400/80 text-sm">以笔为心，书此一笺</p>
+    </footer>
+
+  </main>
+
+  <!-- Success Overlay -->
+  @if (isSent()) {
+    <div class="fixed inset-0 bg-[var(--bg-paper)]/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeInInk">
+      <div class="text-center p-8 max-w-sm">
+        <div class="relative w-40 h-40 mx-auto mb-8">
+            <svg class="absolute inset-0 w-full h-full text-[var(--seal-red)]/20" viewBox="0 0 100 100">
+                <rect x="5" y="5" width="90" height="90" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <div class="w-full h-full flex items-center justify-center animate-sealStamp">
+                <svg viewBox="0 0 200 200" class="w-32 h-32 text-[var(--seal-red)]">
+                    <path fill="currentColor" d="M100,10 C149.7,10 190,50.3 190,100 C190,149.7 149.7,190 100,190 C50.3,190 10,149.7 10,100 C10,50.3 50.3,10 100,10 Z M100,30 C61.3,30 30,61.3 30,100 C30,138.7 61.3,170 100,170 C138.7,170 170,138.7 170,100 C170,61.3 138.7,30 100,30 Z"></path>
+                    <text x="100" y="125" font-family="Noto Serif SC, serif" font-size="80" fill="currentColor" text-anchor="middle" font-weight="bold">誠</text>
+                </svg>
+            </div>
+        </div>
+        <h2 class="text-4xl font-serif-sc font-bold text-[var(--ink-primary)] mb-2">已封缄</h2>
+        <p class="text-[var(--ink-secondary)] text-lg mb-8">此情可待，此心可证。</p>
+        <button (click)="resetForm()" class="px-8 py-2 text-lg text-[var(--ink-secondary)] border-b-2 border-transparent hover:border-[var(--ink-secondary)] transition-colors duration-300">
+          再书一笺
+        </button>
+      </div>
+    </div>
+  }
+</div>
